@@ -3,7 +3,6 @@ import mw from "@/api/mw"
 import { emailValidator, passwordValidator, roleValidator, pageValidator, statusValidator, nameValidator } from "@/utils/validators"
 import config from "@/web/config"
 
-
 const handle = mw({
   POST: [
     validate({
@@ -17,7 +16,7 @@ const handle = mw({
     }),
     async ({
       input: {
-        body: { email, datebirth, role, password, activate },
+        body: {email, datebirth, role, password, activate },
       },
       models: { UserModel },
       res,
@@ -46,37 +45,54 @@ const handle = mw({
     },
   ],
   GET: [
-    validate({
-      query: {
-        page: pageValidator.optional(),
-      },
-    }),
-    async ({
-      res,
-      models: { UserModel },
-      input: {
-        query: { page },
-      },
-    }) => {
-      try {
-        const usersQuery = UserModel.query()
-        const users = await usersQuery
-          .limit(config.ui.itemsPerPage)
-          .offset((page - 1) * config.ui.itemsPerPage)
-        const [{ count }] = await UserModel.query().count()
-
-        res.send({
-          result: users,
-          meta: {
-            count,
-          },
-        })
-      } catch (error) {
-        console.error(error)
-        res.status(500).json({ error: "Internal Server Error" })
-      }
+  validate({
+    query: {
+      id: nameValidator.optional(),
+      page: pageValidator.optional(),
     },
-  ],
+  }),
+  async ({
+    res,
+    models: { UserModel },
+    input: {
+      query: { id, page },
+    },
+  }) => {
+    try {
+      const usersQuery = UserModel.query()
+
+      if (id) {
+        const user = await UserModel.query().findOne({ id })
+
+        if (user) {
+          res.send({
+            result: [user],
+            meta: {
+              count: 1,
+            },
+          })
+
+          return
+        }
+      }
+
+      const users = await usersQuery
+        .limit(config.ui.itemsPerPage)
+        .offset((page - 1) * config.ui.itemsPerPage)
+      const [{ count }] = await UserModel.query().count()
+
+      res.send({
+        result: users,
+        meta: {
+          count,
+        },
+      })
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" })
+    }
+  },
+],
+
 
 })
 

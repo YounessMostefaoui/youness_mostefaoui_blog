@@ -16,22 +16,39 @@ const auth = async (ctx) => {
       config.security.jwt.secret,
     )
 
-    // Vérifier le rôle de l'utilisateur
-    if (payload && payload.role) {
-      ctx.session = payload
-
-      // Vous pouvez également stocker le rôle dans le contexte si nécessaire
-      ctx.userRole = payload.role
-
-      await next()
-    } else {
-      throw new ForbiddenError()
+    if (!(payload && payload.role)) {
+      throw new ForbiddenError("Permission denied")
     }
+
+    const userProfile = {
+      id: payload.id,
+      firstname: payload.firstname,
+      lastname: payload.lastname,
+      role: payload.role,
+      activate: payload.activate,
+    }
+
+    ctx.session = payload
+    ctx.userProfile = userProfile
+    ctx.userRole = payload.role
+
+    if (ctx.userRole !== "admin" && isDeletingPost(ctx)) {
+      throw new ForbiddenError("Permission denied: Admin role required to delete a post")
+    }
+
+    if (ctx.userRole !== "author" && isPatchgPost(ctx)) {
+      throw new ForbiddenError("Permission denied: Author role required to patch a post")
+    }
+
+    await next()
   } catch (err) {
-    throw new ForbiddenError()
+    throw new ForbiddenError("Permission denied")
   }
 }
+const isDeletingPost = (ctx) =>
+  ctx.req.method === "DELETE" && ctx.req.url.includes("/posts/")
+const isPatchgPost = (ctx) =>
+  ctx.req.method === "PATCH" && ctx.req.url.includes("/posts/")
+
 
 export default auth
-
-

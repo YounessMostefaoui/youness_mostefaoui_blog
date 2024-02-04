@@ -37,7 +37,7 @@ const handle = mw({
   ],
   DELETE: [
     async ({
-      models: { TodoModel, CategoryModel },
+      models: { PostModel, CategoryModel },
       req: {
         query: { categoryId },
       },
@@ -47,7 +47,7 @@ const handle = mw({
         .findById(categoryId)
         .throwIfNotFound()
 
-      await TodoModel.query().delete().where({ categoryId })
+      await PostModel.query().delete().where({ categoryId })
       await category.$query().delete()
 
       res.send(category)

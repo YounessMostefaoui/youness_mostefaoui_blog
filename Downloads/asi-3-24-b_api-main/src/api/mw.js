@@ -5,7 +5,7 @@ import methodNotAllowed from "@/api/middlewares/methodNotAllowed"
 import config from "@/config"
 import BaseModel from "@/db/models/BaseModel"
 import CategoryModel from "@/db/models/CategoryModel"
-import TodoModel from "@/db/models/TodoModel"
+import PostModel from "@/db/models/PostModel"
 import UserModel from "@/db/models/UserModel"
 import knex from "knex"
 import { NotFoundError as ObjectionNotFoundError } from "objection"
@@ -21,7 +21,7 @@ const mw = (handlers) => async (req, res) => {
   const ctx = {
     db,
     models: {
-      TodoModel,
+      PostModel,
       CategoryModel,
       UserModel,
     },
@@ -42,12 +42,9 @@ const mw = (handlers) => async (req, res) => {
       err instanceof ObjectionNotFoundError ? new NotFoundError() : err
 
     if (!(error instanceof PublicError)) {
-      // eslint-disable-next-line no-console
-      console.error(error)
-
       res
         .status(HTTP_ERRORS.INTERNAL_SERVER_ERROR)
-        .send({ error: "Something went wrong." })
+  .send({ error: "Something went wrong.", debug: error.message })
 
       return
     }

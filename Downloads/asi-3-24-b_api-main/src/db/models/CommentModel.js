@@ -1,8 +1,8 @@
 import BaseModel from "@/db/models/BaseModel"
 import PostModel from "@/db/models/PostModel"
 
-class CategoryModel extends BaseModel {
-  static tableName = "categories"
+class CommentModel extends BaseModel {
+  static tableName = "comments"
 
   static get relationMappings() {
     return {
@@ -10,12 +10,12 @@ class CategoryModel extends BaseModel {
         relation: BaseModel.HasManyRelation,
         modelClass: PostModel,
         join: {
-          from: "categories.id",
-          to: "posts.categoryId",
+          from: "comments.id",
+          to: "posts.commentId",
         },
       },
     }
   }
 }
 
-export default CategoryModel
+export default CommentModel

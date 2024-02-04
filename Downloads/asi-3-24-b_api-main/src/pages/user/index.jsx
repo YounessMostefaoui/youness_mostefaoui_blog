@@ -6,7 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/router"
 
 export const getServerSideProps = async ({ query: { page } }) => {
-  const data = await apiClient("/todos", { params: { page } })
+  const data = await apiClient("/posts", { params: { page } })
 
   return {
     props: { initialData: data },
@@ -19,22 +19,22 @@ const IndexPage = ({ initialData }) => {
   const {
     isFetching,
     data: {
-      result: todos,
+      result: posts,
       meta: { count },
     },
     refetch,
   } = useQuery({
-    queryKey: ["todos", page],
-    queryFn: () => apiClient("/todos", { params: { page } }),
+    queryKey: ["posts", page],
+    queryFn: () => apiClient("/posts", { params: { page } }),
     initialData,
     enabled: false,
   })
-  const { mutateAsync: deleteTodo } = useMutation({
-    mutationFn: (todoId) => apiClient.delete(`/todos/${todoId}`),
+  const { mutateAsync: deletePost } = useMutation({
+    mutationFn: (postId) => apiClient.delete(`/posts/${postId}`),
   })
   const handleClickDelete = async (event) => {
-    const todoId = Number.parseInt(event.target.getAttribute("data-id"), 10)
-    await deleteTodo(todoId)
+    const postId = Number.parseInt(event.target.getAttribute("data-id"), 10)
+    await deletePost(postId)
     await refetch()
   }
 
@@ -42,7 +42,7 @@ const IndexPage = ({ initialData }) => {
     <div className="relative">
       {isFetching && <Loader />}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {todos.map(({ id, description, createdAt }) => (
+        {posts.map(({ id, description, createdAt }) => (
           <div key={id} className="bg-white p-4 rounded-md shadow-md">
             <p className="text-xl font-semibold mb-2">{description}</p>
             <p className="text-gray-500">{`Created At: ${formatDateTimeShort(new Date(createdAt))}`}</p>

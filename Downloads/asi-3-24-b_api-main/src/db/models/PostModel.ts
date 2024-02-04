@@ -1,15 +1,15 @@
 import BaseModel from "@/db/models/BaseModel"
 import CategoryModel from "@/db/models/CategoryModel"
 
-class TodoModel extends BaseModel {
-  static tableName = "todos"
+class PostModel extends BaseModel {
+  static tableName = "posts"
   static get relationMappings() {
     return {
       category: {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: CategoryModel,
         join: {
-          from: "todos.categoryId",
+          from: "posts.categoryId",
           to: "categories.id",
         },
       },
@@ -17,4 +17,4 @@ class TodoModel extends BaseModel {
   }
 }
 
-export default TodoModel
+export default PostModel
