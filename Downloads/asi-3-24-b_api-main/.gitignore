@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+.vscode
 
 # testing
 /coverage
@@ -36,18 +37,3 @@ yarn-error.log*
 next-env.d.ts
 
 # custom
-
-# Ignorer les fichiers et répertoires Windows
-Thumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# Ignorer les fichiers système Mac
-.DS_Store
-
-# Ignorer les fichiers système Linux
-lost+found/
-
-# Ignorer les fichiers de configuration
-config.js
-.env
