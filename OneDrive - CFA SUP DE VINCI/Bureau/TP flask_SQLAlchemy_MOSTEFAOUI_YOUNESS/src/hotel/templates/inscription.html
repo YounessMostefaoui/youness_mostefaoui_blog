@@ -1,0 +1,8 @@
+<h2>Inscription</h2>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.nom.label }} {{ form.nom }} <br>
+    {{ form.email.label }} {{ form.email }} <br>
+    {{ form.mot_de_passe.label }} {{ form.mot_de_passe }} <br>
+    {{ form.submit }}
+</form>
